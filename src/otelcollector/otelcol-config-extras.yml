@@ -1,2 +1,15 @@
 # extra settings to be merged into OpenTelemetry Collector configuration
 # do not delete this file
+receivers:
+  zipkin:
+
+exporters:
+  zipkin:
+    endpoint: http://zipkin:9411/api/v2/spans
+    tls:
+      insecure: true
+
+service:
+  pipelines:
+      traces:
+        exporters: [logging, otlp, zipkin]
