@@ -33,6 +33,12 @@ docker compose up --no-build
 > **Note:** If you're running on Apple Silicon, please run `docker compose
 > build` in order to create local images vs. pulling them from the repository.
 
+### Apple Silicon
+```shell
+docker compose build
+``` 
+
+
 **Note:** The `--no-build` flag is used to fetch released docker images from
 [ghcr](http://ghcr.io/open-telemetry/demo) instead of building from source.
 Removing the `--no-build` command line option will rebuild all images from
@@ -50,7 +56,7 @@ Once the images are built and containers are started you can access:
 
 ## Bring your own backend
 
-Likely you want to use the Webstore as a demo application for an observability
+Likely you want to use the Web store as a demo application for an observability
 backend you already have (e.g. an existing instance of Jaeger, Zipkin, or one
 of the [vendor of your choice](https://opentelemetry.io/vendors/).
 

@@ -335,6 +335,8 @@ services:
       - GRAFANA_SERVICE_HOST
       - JAEGER_SERVICE_PORT
       - JAEGER_SERVICE_HOST
+      - ZIPKIN_SERVICE_PORT
+      - ZIPKIN_SERVICE_HOST
       - OTEL_COLLECTOR_HOST
       - OTEL_COLLECTOR_PORT
       - ENVOY_PORT
@@ -582,7 +584,6 @@ services:
       - "${REDIS_PORT}"
     logging: *logging
 
-
   # ********************
   # Telemetry Components
   # ********************
@@ -609,6 +610,27 @@ services:
       - COLLECTOR_OTLP_ENABLED=true
       - METRICS_STORAGE_TYPE=prometheus
     logging: *logging
+  # Zipkin
+  storage:
+    image: busybox:latest
+    container_name: fake_storage
+    command:
+      - "/bin/sh"
+      - "-ec"
+      - "while :; do echo '.'; sleep 6 ; done"
+  zipkin:
+    image: openzipkin/zipkin-slim
+    container_name: zipkin
+    depends_on:
+      - storage
+    environment:
+      - STORAGE_TYPE=mem
+    ports:
+      - "9411:9411"
+    deploy:
+      resources:
+        limits:
+          memory: 275M
 
   # Grafana
   grafana:
@@ -638,9 +660,11 @@ services:
       - "4317"          # OTLP over gRPC receiver
       - "4318:4318"     # OTLP over HTTP receiver
       - "9464"          # Prometheus exporter
+      - "9411"          # Zipkin receiver
       - "8888"          # metrics endpoint
     depends_on:
       - jaeger
+      - zipkin
     logging: *logging
 
   # Prometheus
